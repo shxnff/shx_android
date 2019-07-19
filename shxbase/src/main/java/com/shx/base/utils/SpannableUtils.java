@@ -1,0 +1,691 @@
+package com.shx.base.utils;
+
+import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BlurMaskFilter;
+import android.graphics.Canvas;
+import android.graphics.Paint;
+import android.graphics.Rect;
+import android.graphics.Typeface;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
+import android.support.annotation.ColorInt;
+import android.support.annotation.ColorRes;
+import android.support.annotation.DimenRes;
+import android.support.annotation.DrawableRes;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+import android.support.v4.graphics.drawable.DrawableCompat;
+import android.text.Layout;
+import android.text.SpannableStringBuilder;
+import android.text.Spanned;
+import android.text.TextPaint;
+import android.text.TextUtils;
+import android.text.style.AlignmentSpan;
+import android.text.style.BackgroundColorSpan;
+import android.text.style.ClickableSpan;
+import android.text.style.ForegroundColorSpan;
+import android.text.style.ImageSpan;
+import android.text.style.LeadingMarginSpan;
+import android.text.style.MaskFilterSpan;
+import android.text.style.RelativeSizeSpan;
+import android.text.style.ReplacementSpan;
+import android.text.style.ScaleXSpan;
+import android.text.style.StrikethroughSpan;
+import android.text.style.StyleSpan;
+import android.text.style.URLSpan;
+import android.text.style.UnderlineSpan;
+import android.view.View;
+
+/**
+ * 功能介绍：复合文本的工具类
+ */
+
+public class SpannableUtils {
+    /**
+     * 方法功能：获取建造者
+     */
+    public static Builder getBuilder(@NonNull CharSequence text) {
+        return new Builder(text);
+    }
+
+
+    public static class Builder {
+        private int defaultValue = 0x12000000;
+        private CharSequence text;//源文本
+        private int flag;
+        @ColorInt
+        private int foregroundColor;//前景颜色
+        @ColorInt
+        private int backgroundColor;//背景颜色
+        private boolean isLeadingMargin;//是否设置缩进
+        private int first;//首行
+        private int rest;//其他的缩进
+
+        private float proportion;//文字大小比例
+        private float xProportion;//设置横向比例
+        private boolean isStrikethrough;//设置删除线
+        private boolean isUnderline;//设置下划线
+        private boolean isBold;//设置粗体
+        private boolean isItalic;//设置斜体
+        private Layout.Alignment align;//设置对其
+        private boolean isAlignTop;//是否居上对齐
+        private float alignTopOffset;//居上对其的偏移量
+        private float lineSpacingExtra;//TextView的行间距,一次设置终生使用
+        private boolean imageIsBitmap;//是否设置图片
+        /**
+         * 是否改变大小和文字一样大
+         */
+        boolean isChangImageSize = false;
+        private Bitmap bitmap;//图片
+        private boolean imageIsDrawable;//图片
+        private int imageAlign = 0;//图片对齐方式
+        private Drawable drawable;//图片
+        private boolean imageIsResourceId;//图片
+        @DrawableRes
+        private int resourceId;//图片
+
+        private ClickableSpan clickSpan;//点击
+        private String url;//超链接
+
+        private boolean isBlur;//是否模糊
+        private float radius;//模糊半径
+        private BlurMaskFilter.Blur style;//模糊的格式
+
+        private boolean isClean = true;//一次结束是否清楚样式
+
+        private SpannableStringBuilder mBuilder;
+
+        private Builder(@NonNull CharSequence text) {
+            this.text = text;
+            clean();
+            mBuilder = new SpannableStringBuilder();
+        }
+
+        /**
+         * 方法功能：设置标识
+         *
+         * @param flag {@link Spanned#SPAN_INCLUSIVE_EXCLUSIVE}
+         *             {@link Spanned#SPAN_INCLUSIVE_INCLUSIVE}
+         *             {@link Spanned#SPAN_EXCLUSIVE_EXCLUSIVE}
+         *             {@link Spanned#SPAN_EXCLUSIVE_INCLUSIVE}
+         * @return {@link Builder}
+         */
+
+        public Builder setFlag(int flag) {
+            this.flag = flag;
+            return this;
+        }
+
+        /**
+         * 方法功能：设置前景色
+         *
+         * @param color 前景色
+         * @return {@link Builder}
+         */
+        public Builder setForegroundColorRes(@ColorRes int color) {
+            this.foregroundColor = AppBaseUtils.getApplication().getResources().getColor(color);
+            return this;
+        }
+
+        public Builder setForegroundColor(@ColorInt int color) {
+            this.foregroundColor = color;
+            return this;
+        }
+
+        /**
+         * 方法功能：设置背景色
+         *
+         * @param color 背景色
+         * @return {@link Builder}
+         */
+        public Builder setBackgroundColorRes(@ColorRes int color) {
+            this.backgroundColor = AppBaseUtils.getApplication().getResources().getColor(color);
+            return this;
+        }
+
+        public Builder setBackgroundColor(@ColorInt int color) {
+            this.backgroundColor = color;
+            return this;
+        }
+
+        /**
+         * 方法功能：设置缩进
+         *
+         * @param first 首行缩进
+         * @param rest  剩余行缩进
+         * @return {@link Builder}
+         */
+        public Builder setLeadingMargin(int first, int rest) {
+            isLeadingMargin = true;
+            this.first = first;
+            this.rest = rest;
+            return this;
+        }
+
+        /**
+         * 创建时间: 2017/6/28 17:41
+         * 方法功能：设置文字大小比例
+         *
+         * @param proportion 比例
+         * @return {@link Builder}
+         */
+        public Builder setProportion(float proportion) {
+            this.proportion = proportion;
+            return this;
+        }
+
+        /**
+         * 方法功能：设置字体横向比例
+         *
+         * @param proportion 比例
+         * @return {@link Builder}
+         */
+        public Builder setXProportion(float proportion) {
+            this.xProportion = proportion;
+            return this;
+        }
+
+        /**
+         * 方法功能：设置删除线
+         *
+         * @return {@link Builder}
+         */
+        public Builder setStrikethrough() {
+            this.isStrikethrough = true;
+            return this;
+        }
+
+        /**
+         * 方法功能：设置下划线
+         *
+         * @return {@link Builder}
+         */
+        public Builder setUnderline() {
+            this.isUnderline = true;
+            return this;
+        }
+
+        /**
+         * 方法功能：设置粗体
+         *
+         * @return {@link Builder}
+         */
+        public Builder setBold() {
+            isBold = true;
+            return this;
+        }
+
+
+        /**间: 2017/6/29 9:58
+         * <p>
+         * 方法功能：设置斜体
+         *
+         * @return {@link Builder}
+         */
+        public Builder setItalic() {
+            isItalic = true;
+            return this;
+        }
+
+        /**
+         * 方法功能：设置粗斜体
+         *
+         * @return {@link Builder}
+         */
+        public Builder setBoldItalic() {
+            isItalic = true;
+            return this;
+        }
+
+        /**
+         * 方法功能：设置对齐
+         *
+         * @param align {@link Layout.Alignment#ALIGN_NORMAL}正常
+         *              {@link Layout.Alignment#ALIGN_OPPOSITE}相反
+         *              {@link Layout.Alignment#ALIGN_CENTER}居中
+         * @return {@link Builder}
+         */
+        public Builder setAlign(@Nullable Layout.Alignment align) {
+            this.align = align;
+            return this;
+        }
+
+        //自定义居上对其
+        public Builder setAlignTop() {
+            setAlignTop(0);
+            return this;
+        }
+
+        //自定义居上对其
+        public Builder setAlignTop(float alignTopOffset) {
+            isAlignTop = true;
+            this.alignTopOffset = alignTopOffset;
+            return this;
+        }
+
+        //自定义居上对其
+        public Builder setAlignTopDp(float alignTopOffset) {
+            isAlignTop = true;
+            this.alignTopOffset = dip2px(AppBaseUtils.getApplication(), alignTopOffset);
+            return this;
+        }
+
+        //设置文本控件的行间距  一次设置终生使用
+        public Builder setLineSpacingExtra(float alignTopOffset) {
+            this.lineSpacingExtra = alignTopOffset;
+            return this;
+        }
+
+        //自定义居上对其
+        public Builder setAlignTopRes(@DimenRes int alignTopOffset) {
+            isAlignTop = true;
+            this.alignTopOffset = AppBaseUtils.getApplication().getResources().getDimensionPixelOffset(alignTopOffset);
+            return this;
+        }
+
+        /**
+         * 设置图片
+         *
+         */
+        public Builder setBitmap(@NonNull Bitmap bitmap) {
+            this.bitmap = bitmap;
+            imageIsBitmap = true;
+            return this;
+        }
+
+
+        /**
+         * 方法功能：设置图片
+         *
+         * @param drawable 图片资源
+         * @return {@link Builder}
+         */
+        public Builder setDrawable(@NonNull Drawable drawable) {
+            if (drawable != null) {
+                this.drawable = drawable;
+                imageIsDrawable = true;
+            }
+            return this;
+        }
+
+        /**
+         * 方法功能：设置图片
+         *
+         * @param resourceId 图片资源id
+         * @return {@link Builder}
+         */
+        public Builder setResourceId(@DrawableRes int resourceId) {
+            if (resourceId != 0) {
+                this.resourceId = resourceId;
+                imageIsResourceId = true;
+            }
+            return this;
+        }
+
+        /**
+         * 设置点击事件
+         * <p>需添加view.setMovementMethod(LinkMovementMethod.getInstance())</p>
+         *
+         * @param clickSpan 点击事件
+         * @return {@link Builder}
+         */
+        /**
+         * 方法功能：设置点击事件
+         *
+         * @param clickSpan 点击事件
+         * @return {@link Builder}
+         */
+        public Builder setClickSpan(@NonNull XClickableSpan clickSpan) {
+            this.clickSpan = clickSpan;
+            return this;
+        }
+
+        /**
+         * 方法功能：设置超链接
+         * 需添加view.setMovementMethod(LinkMovementMethod.getInstance())
+         *
+         * @param url 超链接
+         * @return {@link Builder}
+         */
+        public Builder setUrl(@NonNull String url) {
+            this.url = url;
+            return this;
+        }
+
+        /**
+         * <p>
+         * 方法功能：设置模糊 推荐还是把所有字体都模糊这样使用
+         *
+         * @param radius 模糊半径（需大于0）
+         * @param style  模糊样式<ul>
+         *               {@link BlurMaskFilter.Blur#NORMAL}
+         *               {@link BlurMaskFilter.Blur#SOLID}
+         *               {@link BlurMaskFilter.Blur#OUTER}
+         *               {@link BlurMaskFilter.Blur#INNER}
+         * @return {@link Builder}
+         */
+        public Builder setBlur(float radius, BlurMaskFilter.Blur style) {
+            this.radius = radius;
+            this.style = style;
+            this.isBlur = true;
+            return this;
+        }
+
+        /**
+         * 方法功能：追加样式字符串
+         *
+         * @param text 样式字符串文本
+         * @return {@link Builder}
+         */
+        public Builder append(@NonNull CharSequence text) {
+            setSpan();
+            this.text = text;
+            return this;
+        }
+
+        /**
+         * 方法功能：创建样式字符串
+         * @return 样式字符串
+         */
+        public SpannableStringBuilder create() {
+            setSpan();
+            return mBuilder;
+        }
+
+        /**
+         * 方法功能：清空样式 一般调用append 或者 create 就会主动清空，以便后续设置
+         */
+        private void clean() {
+            foregroundColor = defaultValue;
+            backgroundColor = defaultValue;
+            isLeadingMargin = false;
+            proportion = -1;
+            xProportion = -1;
+            isStrikethrough = false;
+            isUnderline = false;
+            isBold = false;
+            isItalic = false;
+            align = null;
+            isAlignTop = false;
+            alignTopOffset = 0;
+            bitmap = null;
+            imageIsBitmap = false;
+            drawable = null;
+            imageIsDrawable = false;
+            resourceId = 0;
+            imageIsResourceId = false;
+            clickSpan = null;
+            url = null;
+            isBlur = false;
+            flag = Spanned.SPAN_EXCLUSIVE_EXCLUSIVE;
+            isChangImageSize = false;
+            imageAlign = 0;
+        }
+
+        /**
+         * 方法功能：设置图片与文字高度一致
+         */
+        public Builder changImageSize() {
+            isChangImageSize = true;
+            return this;
+        }
+
+        /**
+         * 图片对齐方式
+         * 0：居中
+         * 1:上
+         * 2：下
+         */
+        public Builder imageAlign(int imageAlign) {
+            this.imageAlign = imageAlign;
+            return this;
+        }
+
+        public boolean isSetImage() {
+            return (imageIsBitmap || imageIsDrawable || imageIsResourceId);
+        }
+
+        /**
+         * 设置样式
+         */
+        private void setSpan() {
+            if (isSetImage()) {
+                //如果设置图片，就强制设置文字为"."
+                this.text = ".";
+            }
+            if (TextUtils.isEmpty(this.text)) {
+                clean();
+                return;
+            }
+            //开始位置
+            int start = mBuilder.length();
+            mBuilder.append(this.text);
+            //结束位置
+            int end = mBuilder.length();
+            //前景色
+            if (foregroundColor != defaultValue) {
+                mBuilder.setSpan(new ForegroundColorSpan(foregroundColor), start, end, flag);
+            }
+            //背景色
+            if (backgroundColor != defaultValue) {
+                mBuilder.setSpan(new BackgroundColorSpan(backgroundColor), start, end, flag);
+            }
+            //是否设置缩进
+            if (isLeadingMargin) {
+                mBuilder.setSpan(new LeadingMarginSpan.Standard(first, rest), start, end, flag);
+            }
+
+            //文字大小比例
+            if (proportion != -1) {
+                mBuilder.setSpan(new RelativeSizeSpan(proportion), start, end, flag);
+            }
+            //是否居上对齐
+            if (isAlignTop) {
+                mBuilder.setSpan(new CustomAlignSpan(alignTopOffset), start, end, flag);
+            }
+            //文字X缩放
+            if (xProportion != -1) {
+                mBuilder.setSpan(new ScaleXSpan(xProportion), start, end, flag);
+            }
+            //设置删除线
+            if (isStrikethrough) {
+                mBuilder.setSpan(new StrikethroughSpan(), start, end, flag);
+            }
+            //设置下划线
+            if (isUnderline) {
+                mBuilder.setSpan(new UnderlineSpan(), start, end, flag);
+            }
+            if (isBold && isItalic) {
+                mBuilder.setSpan(new StyleSpan(Typeface.BOLD_ITALIC), start, end, flag);
+            } else if (isBold) {//设置粗体
+                mBuilder.setSpan(new StyleSpan(Typeface.BOLD), start, end, flag);
+            } else if (isItalic) {//设置斜体
+                mBuilder.setSpan(new StyleSpan(Typeface.ITALIC), start, end, flag);
+            }
+            //设置对其
+            if (align != null) {
+                mBuilder.setSpan(new AlignmentSpan.Standard(align), start, end, flag);
+            }
+            //设置图片
+            if (isSetImage()) {
+                CentreImageSpan span = null;
+                if (imageIsBitmap) {
+                    drawable = new BitmapDrawable(AppBaseUtils.getApplication().getResources(), bitmap);
+                } else if (imageIsResourceId) {
+                    drawable = AppBaseUtils.getApplication().getResources().getDrawable(resourceId);
+                }
+                if (imageIsBitmap || imageIsResourceId) {
+                    int width = drawable.getIntrinsicWidth();
+                    int height = drawable.getIntrinsicHeight();
+                    drawable.setBounds(0, 0, width > 0 ? width : 0, height > 0 ? height : 0);
+                }
+                if (isChangImageSize) {
+                    drawable = DrawableCompat.wrap(drawable).mutate();
+                }
+                mBuilder.setSpan(span = new CentreImageSpan(drawable), start, end, flag);
+                span.setChangSizeToText(isChangImageSize);
+                span.setLineSpacingExtra(lineSpacingExtra);
+                span.setImageAlign(imageAlign);
+            }
+            //设置点击
+            if (clickSpan != null) {
+                mBuilder.setSpan(clickSpan, start, end, flag);
+            }
+            if (url != null) {
+                mBuilder.setSpan(new URLSpan(url), start, end, flag);
+            }
+            if (isBlur) {
+                mBuilder.setSpan(new MaskFilterSpan(new BlurMaskFilter(radius, style)), start, end, flag);
+            }
+            clean();
+
+
+        }
+
+        int dip2px(Context context, float dipValue) {
+            float scale = context.getResources().getDisplayMetrics().density;
+            return (int) (dipValue * scale + 0.5F);
+        }
+    }
+
+    public static class XClickableSpan extends ClickableSpan {
+
+        private int color = 0;
+        private boolean colorIsSet = false;
+
+        public XClickableSpan(int color) {
+            this.color = color;
+            colorIsSet = true;
+        }
+
+        public XClickableSpan() {
+        }
+
+        @Override
+        public void onClick(View widget) {
+
+        }
+
+        @Override
+        public void updateDrawState(TextPaint ds) {
+            if (colorIsSet) {
+                ds.setColor(color);
+            }
+            ds.setUnderlineText(false);
+            ds.clearShadowLayer();
+        }
+    }
+
+    public static class CentreImageSpan extends ImageSpan {
+        /**
+         * 是否改变大小和文字一样大
+         */
+        boolean isChangSizeToText = false;
+        boolean isChangOk = false;
+        float lineSpacingExtra = 0;
+        /**
+         * 0：居中
+         * 1:上
+         * 2：下
+         */
+        int imageAlign;
+
+        public CentreImageSpan(Drawable d) {
+            super(d);
+        }
+
+        public void setImageAlign(int imageAlign) {
+            this.imageAlign = imageAlign;
+        }
+
+        public void setLineSpacingExtra(float lineSpacingExtra) {
+            this.lineSpacingExtra = lineSpacingExtra;
+        }
+
+        public void setChangSizeToText(boolean changSizeToText) {
+            isChangSizeToText = changSizeToText;
+        }
+
+        @Override
+        public int getSize(Paint paint, CharSequence text, int start, int end,
+                           Paint.FontMetricsInt fm) {
+            Drawable d = getDrawable();
+            Rect rect = d.getBounds();
+            if (fm != null) {
+                Paint.FontMetricsInt fmPaint = paint.getFontMetricsInt();
+                if (isChangSizeToText && !isChangOk) {
+                    float drawWidth = d.getMinimumWidth();
+                    float drawHeight = d.getMinimumHeight();
+                    int fmsize = (int) Math.ceil(fm.descent - fm.top);
+                    if (fmsize <= 0) {
+                        fmsize = (int) Math.ceil(fmPaint.descent - fmPaint.top);
+                    }
+                    if (fmsize > 0) {
+                        int newHeight = (int) ((fmsize + 2) * 0.7);
+                        d.setBounds(0, 0, (int) (newHeight / drawHeight * drawWidth), newHeight);
+                    }
+                }
+
+                int fontHeight = fmPaint.bottom - fmPaint.top;
+                int drHeight = rect.bottom - rect.top;
+
+                int top = drHeight / 2 - fontHeight / 4;
+                int bottom = drHeight / 2 + fontHeight / 4;
+
+                fm.ascent = -bottom;
+                fm.top = -bottom;
+                fm.bottom = top;
+                fm.descent = top;
+            }
+            return rect.right;
+        }
+
+        @Override
+        public void draw(Canvas canvas, CharSequence text, int start, int end,
+                         float x, int top, int y, int bottom, Paint paint) {
+            Drawable b = getDrawable();
+            canvas.save();
+            int transY = 0;
+            if (imageAlign == 0) {
+                //居中
+                transY = (int) (((bottom - top) - b.getBounds().bottom - lineSpacingExtra) / 2 + top);
+            } else if (imageAlign == 1) {
+                //上
+                transY = paint.getFontMetricsInt().descent;
+            } else if (imageAlign == 2) {
+                //下
+                transY = bottom - b.getBounds().bottom - paint.getFontMetricsInt().descent;
+            }
+            canvas.translate(x, transY);
+            b.draw(canvas);
+            canvas.restore();
+        }
+
+
+    }
+
+    public static class CustomAlignSpan extends ReplacementSpan {
+
+        float alignTopOffset;
+
+        public CustomAlignSpan(float alignTopOffset) {
+            this.alignTopOffset = alignTopOffset;
+        }
+
+        @Override
+        public int getSize(@NonNull Paint paint, CharSequence text, int start, int end, @Nullable Paint.FontMetricsInt fm) {
+            text = text.subSequence(start, end);
+            return (int) paint.measureText(text.toString());
+        }
+
+        @Override
+        public void draw(@NonNull Canvas canvas, CharSequence text, int start, int end, float x, int top, int y, int bottom, @NonNull Paint paint) {
+            text = text.subSequence(start, end);
+            Paint.FontMetricsInt fm = paint.getFontMetricsInt();
+            //此处重新计算y坐标，使字体对其
+            canvas.drawText(text.toString(), x, y - ((y + fm.descent + y + fm.ascent) - (bottom + top)) + alignTopOffset, paint);
+        }
+
+    }
+}

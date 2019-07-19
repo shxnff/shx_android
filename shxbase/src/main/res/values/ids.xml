@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- **********************************001页面状态布局********************************** -->
+    <!--EmptyView触发重试监听的id-->
+    <item name="id_sfl_empty_retry" type="id"/>
+    <!--NetError触发重试监听的id-->
+    <item name="id_sfl_net_error_retry" type="id"/>
+    <!-- **********************************001页面状态布局********************************** -->
+
+    <item name="TAG_SHOW_URL" type="id" />
+    <item name="banner_indicatorId" type="id" />
+
+</resources>

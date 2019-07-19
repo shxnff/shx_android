@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<resources xmlns:android="http://schemas.android.com/apk/res/android" xmlns:tools="http://schemas.android.com/tools">
+    <!-- 普通页通用样式 -->
+    <style name="AppTheme" parent="Theme.AppCompat.NoActionBar">
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowIsTranslucent">false</item>
+        <item name="android:windowBackground">@color/permissionColorWhite</item>
+        <item name="android:selectableItemBackground">@android:color/transparent</item>
+        <item name="android:dialogTheme">@style/dialog</item>
+        <item name="android:textColorPrimary">@color/c515151</item>
+        <item name="android:textColorHint">@color/c999999</item>
+        <!--<item name="android:windowAnimationStyle">@style/BaseAnimation</item>-->
+        <!-- v21 需要特殊加上的 -->
+        <item name="android:windowDrawsSystemBarBackgrounds">false</item>
+    </style>
+
+    <!--默认的activity切换动画-->
+    <style name="BaseAnimation" mce_bogus="1" parent="@android:style/Animation.Activity">
+        <item name="android:activityOpenEnterAnimation">@anim/shx_slide_right_in</item>
+        <item name="android:activityOpenExitAnimation">@anim/shx_slide_right_out</item>
+        <item name="android:activityCloseEnterAnimation">@anim/shx_slide_right_in</item>
+        <item name="android:activityCloseExitAnimation">@anim/shx_slide_right_out</item>
+    </style>
+
+    <!-- 普通 对话框-->
+    <style name="dialog" parent="android:style/Theme.Dialog">
+        <item name="android:windowFrame">@null</item><!--边框-->
+        <item name="android:windowNoTitle">true</item><!--无标题-->
+        <item name="android:windowBackground">@android:color/transparent</item><!--背景透明-->
+        <item name="android:windowIsFloating">true</item><!--是否浮现在activity之上-->
+        <item name="android:windowContentOverlay">@null</item>
+        <item name="android:backgroundDimEnabled">true</item><!--模糊-->
+        <item name="android:windowIsTranslucent">true</item><!--半透明-->
+    </style>
+
+    <style name="dialog_bg_transparent" parent="dialog">
+        <item name="android:backgroundDimEnabled">false</item><!--模糊-->
+        <item name="android:windowIsTranslucent">false</item><!--半透明-->
+    </style>
+
+</resources>
+    
+    

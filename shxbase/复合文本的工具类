@@ -1,0 +1,41 @@
+001********************************
+SpannableUtils.getBuilder("零购黑卡\n")
+.append("开通零购黑卡，平均每人省").setForegroundColor(0xffeacfa5).setProportion(0.77f).setAlign(Layout.Alignment.ALIGN_CENTER)
+.append("88.88元").setForegroundColor(0xffeacfa5).setProportion(0.77f)
+.create()
+
+
+002_1********************************
+SpannableUtils.Builder sBuilder = SpannableUtils.getBuilder("");
+
+if (bitmap!=null) {
+      sBuilder.append(" ").setBitmap(bitmap).changImageSize();
+      sBuilder.append(" ");
+}
+
+if (!TextUtils.isEmpty(manSong)) {
+       sBuilder.append(" ").setDrawable(getDrawable(s));
+       sBuilder.append(" ");
+}
+
+sBuilder.append(title).setForegroundColorRes(R.color.blackphoto);
+textName.setText(sBuilder.create());
+
+
+002_2********************************
+private TextDrawable getDrawable(String s) {
+
+      return new TextDrawable(GradientDrawable.Orientation.TOP_BOTTOM,new int[]{0xFFFF573B,0xFFFF7F3D})
+             .setTextColor(0xFFFFFFFF)
+             .setText(s)
+             .setTextSize(13)
+             .setCornerRadiusNew(2);
+
+      return new TextDrawable()
+             .setTextColor(0xffff4c4d)
+             .setText(s)
+             .setTextSize(13)
+             .setCornerRadiusNew(2)
+             .setColorNew(Color.TRANSPARENT)
+             .setStrokeNew(0.7f, 0xffff4c4d);
+}

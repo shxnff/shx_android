@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@android:color/transparent"
+    android:orientation="vertical"
+    android:gravity="center_horizontal">
+
+
+    <ImageView
+        android:layout_width="300dp"
+        android:layout_height="150dp"
+        android:background="@drawable/shx_update_huojian"
+        android:scaleType="centerCrop" />
+
+    <LinearLayout
+        android:layout_width="300dp"
+        android:layout_height="wrap_content"
+        android:background="@android:color/white"
+        android:orientation="vertical"
+        android:paddingBottom="15dp">
+
+        <TextView
+            android:id="@+id/tv_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:text="版本升级"
+            android:layout_marginTop="10dp"
+            android:textColor="@android:color/black"
+            android:textSize="16sp" />
+
+        <TextView
+            android:id="@+id/tv_msg"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:layout_marginRight="15dp"
+            android:layout_marginLeft="15dp"
+            android:text="最新版本将有更加的体验，赶快更新吧！"
+            android:textColor="#666"
+            android:textSize="12sp" />
+
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="35dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginLeft="15dp"
+            android:layout_marginRight="15dp"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/btnCancle"
+                android:layout_width="130dp"
+                android:layout_height="match_parent"
+                android:background="@drawable/shx_btn_red"
+                android:text="取消"
+                android:textSize="13dp"
+                android:textColor="@android:color/white" />
+
+            <Button
+                android:id="@+id/btnSure"
+                android:layout_width="130dp"
+                android:layout_height="match_parent"
+                android:background="@drawable/shx_btn_red"
+                android:text="升级"
+                android:textSize="13dp"
+                android:layout_alignParentRight="true"
+                android:textColor="@android:color/white" />
+
+            <com.shx.base.view.ShxProgressBar
+                android:layout_alignParentRight="true"
+                android:id="@+id/mProgressBar"
+                android:layout_width="130dp"
+                android:layout_height="match_parent"
+                app:textSize="13dp"
+                android:visibility="gone"
+                app:loadingColor="#40c4ff"
+                app:stopColor="#e94339"
+                app:radius="5dp"
+                app:borderWidth="1dp"/>
+
+
+        </RelativeLayout>
+    </LinearLayout>
+
+</LinearLayout>

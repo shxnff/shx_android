@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@color/white"
+    tools:ignore="MissingDefaultResource,NewApi">
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:gravity="center"
+        android:orientation="vertical">
+
+        <com.facebook.drawee.view.SimpleDraweeView
+            android:layout_width="150dp"
+            android:layout_height="wrap_content"
+            app:placeholderImageScaleType="fitXY"
+            app:viewAspectRatio="1.2"
+            app:placeholderImage="@drawable/shx_app_err"/>
+
+        <TextView
+            android:layout_marginTop="12dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="啊哦，网络出现故障喽"
+            android:textSize="18dp"
+            android:textColor="#666" />
+
+        <!--响应重试接口需要指定id-->
+        <TextView
+            android:id="@id/id_sfl_net_error_retry"
+            android:layout_width="120dp"
+            android:layout_height="35dp"
+            android:layout_marginTop="26dp"
+            android:text="重试加载"
+            android:gravity="center"
+            android:textSize="16dp"
+            android:background="@drawable/bg_reload"
+            android:textColor="@color/app_green" />
+
+    </LinearLayout>
+
+</FrameLayout>
